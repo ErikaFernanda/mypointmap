@@ -8,24 +8,47 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import { useState } from "react/cjs/react.development";
 
-export default function RegisterPointScreen() {
-  const [latitude, setLatitude] = useState(220);
-  const [longitude, setLongitude] = useState(220);
-  const [title,setTitle] = useState();
-  const [description,setDescription] = useState();
+export default function RegisterPointScreen({ navigation }) {
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+  const [title, setTitle] = useState();
+  const [description, setDescription] = useState();
 
   const setCoordinate = (e) => {
     setLatitude(e.nativeEvent.coordinate.latitude);
     setLongitude(e.nativeEvent.coordinate.longitude);
   };
 
-  const registerLocation = () => {
-    console.log(title)
-    console.log(description)
-    console.log(latitude)
-    console.log(longitude)
-    
-  };
+  function registerLocation() {
+    fetch("https://mobile.ect.ufrn.br:3003/markers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          "Bearer vv7oTsHdw0X9g5e7QbniP58j3iJY4h6AoOSxMIw2X8xjokSHjF",
+      },
+      body: JSON.stringify({
+        latitude: latitude,
+        longitude: longitude,
+        title: title,
+        description: description,
+      }),
+    })
+      .then((resp) => {
+        console.log(resp.status);
+        if (resp.ok) {
+          setTitle("");
+          setDescription("");
+          alert("localização cadastrada com sucesso!");
+        } else {
+          alert("algo de errado aconteceu, revise os dados inseridos!");
+        }
+      })
+      .catch((err) =>
+        alert("algo de errado aconteceu, revise os dados inseridos!")
+      );
+  }
+
   return (
     <View style={styles.container}>
       <MapView style={styles.map} onPress={setCoordinate}>
@@ -36,13 +59,44 @@ export default function RegisterPointScreen() {
         />
       </MapView>
       <View style={styles.container_register}>
-        <TextInput style={styles.input} placeholder="Titulo" onChangeText={(e) => setTitle(e)} />
-        <TextInput style={styles.input} placeholder="Descrição" onChangeText={(e) => setDescription(e)}/>
-        <TextInput style={styles.input} placeholder="Latitude"  editable={false} value={"latitude: "+latitude}/>
-        <TextInput style={styles.input} placeholder="Longitude" editable={false} value={"longitude: "+longitude} />
-        <TouchableOpacity style={styles.button_add} onPress={registerLocation}>
-          <Text style={{ color: "white" }}>Cadastrar</Text>
-        </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          placeholder="Titulo"
+          onChangeText={(e) => setTitle(e)}
+          value={title}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Descrição"
+          onChangeText={(e) => setDescription(e)}
+          value={description}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Latitude"
+          editable={false}
+          value={"latitude: " + latitude}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Longitude"
+          editable={false}
+          value={"longitude: " + longitude}
+        />
+        <View style={{flexDirection:"row",justifyContent:'space-around'}}>
+          <TouchableOpacity
+            style={styles.button_add}
+            onPress={registerLocation}
+          >
+            <Text style={{ color: "white" }}>Cadastrar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button_add}
+            onPress={() => navigation.navigate("Mapa")}
+          >
+            <Text style={{ color: "white" }}>Ver pontos</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -81,6 +135,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 25,
     height: 40,
+    width:130,
     margin: 10,
   },
 });

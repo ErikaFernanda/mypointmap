@@ -9,31 +9,44 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import { useState } from "react/cjs/react.development";
 
-export default function PointListScreen() {
-  const [latitude, setLatitude] = useState(220);
-  const [longitude, setLongitude] = useState(220);
-  const [title, setTitle] = useState();
-  const [description, setDescription] = useState();
+export default function PointListScreen({ navigation }) {
+  const [points, setPoints] = useState([]);
 
-  const setCoordinate = (e) => {
-    setLatitude(e.nativeEvent.coordinate.latitude);
-    setLongitude(e.nativeEvent.coordinate.longitude);
-  };
+  async function fetchData() {
+    const res = await fetch("https://mobile.ect.ufrn.br:3003/markers", {
+      headers: {
+        Authorization: 'Bearer vv7oTsHdw0X9g5e7QbniP58j3iJY4h6AoOSxMIw2X8xjokSHjF',
+      },
+    });
+    const markers = await res.json();
+
+    setPoints(markers);
+  }
+  fetchData();
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} onPress={setCoordinate}>
-        <Marker
-          coordinate={{ latitude: latitude, longitude: longitude }}
-          title={title}
-          description={description}
-        />
+      <MapView style={styles.map}>
+      {points.map((point) => (
+          <Marker
+            key={point.id}
+            title={point.title}
+            description={point.description}
+            coordinate={{
+              latitude: point.latitude,
+              longitude: point.longitude,
+            }}
+          >
+          </Marker>
+    ))}
       </MapView>
       <View style={{ width: "100%", alignItems: "flex-end" }}>
         <View style={styles.button_register}>
-          
-          <Ionicons name="add-circle" size={80} color="green" />
-    
+          <TouchableWithoutFeedback
+            onPress={() => navigation.navigate("Cadastro")}
+          >
+            <Ionicons name="add-circle" size={75} color="gray" />
+          </TouchableWithoutFeedback>
         </View>
       </View>
     </View>
@@ -53,12 +66,13 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   button_register: {
-    backgroundColor: "white",
-    width: 75,
-    height: 75,
+    // backgroundColor: "white",
+    // width: 95,
+    // height: 95,
     borderRadius: 75,
     justifyContent: "center",
     alignItems: "center",
-    margin:20,
+    alignContent: "center",
+    margin: 10,
   },
 });
