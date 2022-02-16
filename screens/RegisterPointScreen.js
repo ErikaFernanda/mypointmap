@@ -1,12 +1,10 @@
-import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 import {
   TextInput,
-  TouchableHighlight,
   TouchableOpacity,
-  TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
 import MapView, { Marker } from "react-native-maps";
-import { useState } from "react/cjs/react.development";
 
 export default function RegisterPointScreen({ navigation }) {
   const [latitude, setLatitude] = useState(0);

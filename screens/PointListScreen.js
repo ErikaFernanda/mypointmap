@@ -1,9 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import {
-  TextInput,
-  TouchableHighlight,
-  TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
 import MapView, { Marker } from "react-native-maps";
@@ -66,9 +63,6 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   button_register: {
-    // backgroundColor: "white",
-    // width: 95,
-    // height: 95,
     borderRadius: 75,
     justifyContent: "center",
     alignItems: "center",
